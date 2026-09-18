@@ -1,88 +1,113 @@
-# Job Market Analytics Dashboard
+# TravelSense 🧭
 
-An end-to-end data analytics project exploring ~123,000 real job postings (LinkedIn Job Postings dataset, 2023–2024) to uncover patterns in skill demand, salary, remote work availability, and hiring activity by company and location.
+**NLP-Based Analysis of Tourist Reviews and Destination Experiences**
 
-![Dashboard Overview](screenshots/page1_overview.png)
+TravelSense analyzes 1.48 million real tourist reviews across 14,494 Indian destinations, extracting sentiment and aspect-level insights (cleanliness, food, crowd, safety, etc.), then uses this to power a hybrid recommendation engine — all presented through an interactive Streamlit dashboard with a live map view.
 
-## Project Overview
+---
 
-This project answers questions like:
-- Which skills are most in-demand across job postings?
-- How does salary scale with seniority?
-- Does company size affect pay?
-- Which companies and cities post the most jobs?
-- How well is remote work actually documented in job listings?
+## ✨ Features
 
-## Tools Used
+- **Sentiment Analysis** — VADER + TextBlob, cross-validated (83.6% agreement)
+- **Aspect-Based Sentiment** — 8 tracked aspects per destination: cleanliness, staff & service, price & value, food, crowd, accessibility, scenery & experience, safety
+- **Confidence Tiering** — every destination tagged High/Medium/Low based on review volume, so recommendations are transparent about reliability
+- **Hybrid Recommendation Engine**
+  - Preference-based: pick the aspects you care about → ranked destinations
+  - Similarity-based: pick a destination you liked → cosine-similarity matches
+- **Interactive Map View** — all destinations plotted on a live map of India, colored by sentiment
+- **Full-Scale Evaluation** — 88.43% sentiment accuracy validated against star ratings across all 1.48M reviews
 
-- **MySQL** — data cleaning, relational schema design, and analysis queries
-- **Python (pandas, SQLAlchemy)** — reliable bulk CSV-to-database loading
-- **Power BI** — interactive two-page dashboard with live database connection
-- **DAX** — calculated columns for cleaning up unlabeled/blank categories
+## 📊 Results
 
-## Data
+| Metric | Value |
+|---|---|
+| Total Reviews | 1,482,466 |
+| Destinations | 14,494 |
+| Overall Sentiment Accuracy | 88.43% |
+| VADER ↔ TextBlob Agreement | 83.6% |
 
-Source: [LinkedIn Job Postings (2023–2024)](https://www.kaggle.com/datasets/arshkon/linkedin-job-postings) — Kaggle
+| Class | Precision | Recall | F1-Score |
+|---|---|---|---|
+| Negative | 0.434 | 0.875 | 0.580 |
+| Neutral | 0.847 | 0.440 | 0.579 |
+| Positive | 0.936 | 0.961 | 0.948 |
 
-The raw dataset was split across 4 CSVs (`postings`, `companies`, `skills`, `job_skills`) and loaded into a normalized MySQL database with proper relationships:
+## 🛠️ Tech Stack
 
-```
-postings.job_id      → job_skills.job_id
-job_skills.skill_abr  → skills.skill_abr
-postings.company_id   → companies.company_id
-```
+- **Data Handling:** Pandas
+- **NLP Preprocessing:** NLTK
+- **Sentiment Analysis:** VADER, TextBlob
+- **Recommendation Engine / Evaluation:** scikit-learn
+- **Dashboard:** Streamlit, Matplotlib
+- **Map Visualization:** Plotly
+- **Geocoding:** geopy (OpenStreetMap Nominatim)
 
-## Analysis
-
-15+ SQL queries were written to answer core business questions, including:
-- Top in-demand skills overall and by job title
-- Average salary by experience level
-- Remote vs. on-site distribution
-- Top hiring companies and locations
-- Skill co-occurrence (which skills most often appear together in the same posting)
-
-See [`queries.sql`](queries.sql) for the full query set.
-
-## Dashboard
-
-**Page 1 — Overview**
-- KPI cards: total postings, unique companies, average salary, skills tracked
-- Top 10 in-demand skills
-- Remote work status breakdown
-- Salary by experience level
-- Interactive job-title filter
-
-**Page 2 — Companies & Locations**
-- Top 10 hiring companies
-- Top 10 locations by posting volume
-- Average salary by company size
-
-## Key Findings
-
-1. **Broad business skills dominate demand** — Information Technology, Sales, and Management top the list, ahead of narrower technical skills.
-2. **Remote work status is inconsistently reported** — only 12.3% of postings explicitly marked remote eligibility.
-3. **Salary scales predictably with seniority** — a clean downward trend from Executive to Internship level.
-4. **Company size doesn't guarantee higher pay** — mid-sized companies (bracket 3) show the highest average salaries in the dataset.
-5. **Hiring is concentrated** — a small set of staffing firms and metro areas account for a disproportionate share of postings.
-
-Full write-up: [`Job_Market_Insights_Report.docx`](Job_Market_Insights_Report.docx)
-
-## Data Quality Notes
-
-- `remote_allowed` and `formatted_experience_level` had significant missing data; blanks were explicitly relabeled ("Not Specified") rather than hidden, to avoid misrepresenting the data.
-- `company_size` is provided as a numeric bracket (1–7); exact employee-count ranges were not independently confirmed for this analysis.
-
-## Repository Structure
+## 📁 Project Structure
 
 ```
+TravelSense/
+├── app.py                        # Streamlit dashboard (main app)
+├── full_pipeline.py               # Sentiment + aspect extraction (full dataset)
+├── recommender.py                 # Preference & similarity recommendation logic
+├── evaluate.py                    # Evaluation against star-rating ground truth
+├── geocode_cities.py               # One-time city geocoding for the map view
+├── build_sample_v2.py              # Helper: sample dataset by top places
+├── aspect_extraction.py            # Aspect tagging logic
+├── requirements.txt                 # Python dependencies
 ├── README.md
-├── queries.sql
-├── Job_Market_Insights_Report.docx
-└── screenshots/
-    ├── page1_overview.png
-    └── page2_companies_locations.png
+└── docs/
+    ├── TravelSense_Report.docx
+    └── TravelSense_Presentation.pptx
 ```
 
-## Author
+> **Note:** Large data files (`Review_db.csv`, processed CSVs) are excluded from this repo via `.gitignore` due to size. See Setup below for how to regenerate them.
 
-Santhiya — [LinkedIn](https://www.linkedin.com/in/santhiya-s-3021562b1/)
+## 🚀 Setup
+
+1. Clone this repo:
+   ```
+   git clone https://github.com/YOUR_USERNAME/TravelSense.git
+   cd TravelSense
+   ```
+
+2. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+3. Download NLTK data (one-time):
+   ```python
+   import nltk
+   nltk.download('punkt')
+   nltk.download('stopwords')
+   nltk.download('wordnet')
+   nltk.download('vader_lexicon')
+   ```
+
+4. Get the dataset — [Indian Places to Visit Reviews Data](https://www.kaggle.com/datasets/ritvik1909/indian-places-to-visit-reviews-data) (Kaggle), place `Review_db.csv` in your working folder.
+
+5. Run the pipeline in order:
+   ```
+   python full_pipeline.py
+   python geocode_cities.py
+   ```
+
+6. Launch the dashboard:
+   ```
+   streamlit run app.py
+   ```
+
+## 📸 Screenshots
+
+*(Add your dashboard screenshots here)*
+
+## 🔮 Future Scope
+
+- Fine-tune a transformer model (DistilBERT) for stronger negative/neutral classification
+- Named Entity Recognition for specific landmarks and facilities
+- Multilingual review support
+- Public deployment via Streamlit Community Cloud
+
+## 📄 License
+
+This project was built for academic purposes.
