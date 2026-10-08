@@ -103,7 +103,6 @@ TravelSense/
 
 ## 📸 Screenshots
 
-![Dashboard screenshot 1](Screenshot%202026-09-11%20213621.png)
 ![Dashboard screenshot 2](Screenshot%202026-09-13%20224450.png)
 ![Dashboard screenshot 4](Screenshot%202026-09-18%20121105.png)
 
