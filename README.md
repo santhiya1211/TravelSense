@@ -17,6 +17,12 @@ TravelSense analyzes 1.48 million real tourist reviews across 14,494 Indian dest
 - **Interactive Map View** — all destinations plotted on a live map of India, colored by sentiment
 - **Full-Scale Evaluation** — 88.43% sentiment accuracy validated against star ratings across all 1.48M reviews
 
+## 🏗️ Architecture
+
+![TravelSense Architecture](architecture.png)
+
+Raw reviews flow through NLTK preprocessing, VADER + TextBlob sentiment scoring, and aspect extraction into a confidence-tiered destination profile, which powers both recommenders and the Streamlit dashboard.
+
 ## 📊 Results
 
 | Metric | Value |
@@ -46,60 +52,61 @@ TravelSense analyzes 1.48 million real tourist reviews across 14,494 Indian dest
 
 ```
 TravelSense/
-├── app.py                        # Streamlit dashboard (main app)
-├── full_pipeline.py               # Sentiment + aspect extraction (full dataset)
-├── recommender.py                 # Preference & similarity recommendation logic
-├── evaluate.py                    # Evaluation against star-rating ground truth
-├── geocode_cities.py               # One-time city geocoding for the map view
-├── build_sample_v2.py              # Helper: sample dataset by top places
-├── aspect_extraction.py            # Aspect tagging logic
-├── requirements.txt                 # Python dependencies
-├── README.md
-└── docs/
-    ├── TravelSense_Report.docx
-    └── TravelSense_Presentation.pptx
+├── app.py                  # Streamlit dashboard (main app)
+├── full_pipeline.py        # Sentiment + aspect extraction (full dataset)
+├── recommender.py          # Preference & similarity recommendation logic
+├── evaluate.py             # Evaluation against star-rating ground truth
+├── geocode_cities.py       # One-time city geocoding for the map view
+├── build_sample_v2.py      # Helper: sample dataset by top places
+├── aspect_extraction.py    # Aspect tagging logic
+├── architecture.png        # System architecture diagram
+├── Screenshot *.png        # Dashboard screenshots
+└── README.md
 ```
 
-> **Note:** Large data files (`Review_db.csv`, processed CSVs) are excluded from this repo via `.gitignore` due to size. See Setup below for how to regenerate them.
+> **Note:** Large data files (`Review_db.csv`, processed CSVs) are not included in this repo due to size. See Setup below for how to regenerate them.
 
 ## 🚀 Setup
 
 1. Clone this repo:
-   ```
-   git clone https://github.com/YOUR_USERNAME/TravelSense.git
+```
+   git clone https://github.com/santhiya1211/TravelSense.git
    cd TravelSense
-   ```
+```
 
 2. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+```
+   pip install pandas nltk textblob scikit-learn streamlit matplotlib plotly geopy
+```
 
 3. Download NLTK data (one-time):
-   ```python
+```python
    import nltk
    nltk.download('punkt')
    nltk.download('stopwords')
    nltk.download('wordnet')
    nltk.download('vader_lexicon')
-   ```
+```
 
-4. Get the dataset — [Indian Places to Visit Reviews Data](https://www.kaggle.com/datasets/ritvik1909/indian-places-to-visit-reviews-data) (Kaggle), place `Review_db.csv` in your working folder.
+4. Get the dataset — [Indian Places to Visit Reviews Data](https://www.kaggle.com/datasets/ritvik1909/indian-places-to-visit-reviews-data) (Kaggle), and place `Review_db.csv` in your working folder.
 
 5. Run the pipeline in order:
-   ```
+```
    python full_pipeline.py
    python geocode_cities.py
-   ```
+```
 
 6. Launch the dashboard:
-   ```
-   streamlit run app.py
-   ```
+```
+   python -m streamlit run app.py
+```
 
 ## 📸 Screenshots
 
-*(Add your dashboard screenshots here)*
+![Dashboard screenshot 1](Screenshot%202026-09-11%20213621.png)
+![Dashboard screenshot 2](Screenshot%202026-09-13%20224450.png)
+![Dashboard screenshot 3](Screenshot%202026-09-18%20120325.png)
+![Dashboard screenshot 4](Screenshot%202026-09-18%20121105.png)
 
 ## 🔮 Future Scope
 
